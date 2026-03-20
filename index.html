@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyders - ESP32 CYD Emulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #1a1a1a;
+            --bg-darker: #0d0d0d;
+            --text-primary: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --accent-green: #00ff41;
+            --accent-green-dim: #00cc33;
+            --accent-green-glow: rgba(0, 255, 65, 0.15);
+            --border-color: #2a2a2a;
+            --card-bg: #1f1f1f;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(26, 26, 26, 0.85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            height: 56px;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .logo .cy {
+            color: var(--accent-green);
+        }
+
+        .logo .ders {
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-green);
+        }
+
+        .github-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--accent-green);
+            border-radius: 6px;
+            color: var(--accent-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .github-btn:hover {
+            background: var(--accent-green-glow);
+            box-shadow: 0 0 20px var(--accent-green-glow);
+        }
+
+        .hero {
+            padding: 5rem 2rem;
+            text-align: center;
+            background: radial-gradient(ellipse at top, var(--accent-green-glow), transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-dim));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-green-glow);
+            border: 1px solid var(--accent-green);
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-green);
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--accent-green);
+            color: var(--bg-dark);
+            border: 1px solid var(--accent-green);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-green-dim);
+            box-shadow: 0 0 30px var(--accent-green-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-green-glow);
+        }
+
+        .section {
+            padding: 5rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--accent-green-glow);
+        }
+
+        .card h3 {
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .perf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .perf-table thead {
+            background: var(--accent-green-glow);
+            border: 1px solid var(--accent-green);
+        }
+
+        .perf-table th {
+            padding: 0.75rem;
+            text-align: left;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+        }
+
+        .perf-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .perf-table tbody tr:hover {
+            background: var(--accent-green-glow);
+        }
+
+        .code-block {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-block code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .keyword { color: #ff6b9d; }
+        .string { color: var(--accent-green); }
+        .comment { color: var(--text-muted); }
+
+        .steps {
+            counter-reset: step-counter;
+            margin-top: 2rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            counter-increment: step-counter;
+        }
+
+        .step::before {
+            content: counter(step-counter);
+            flex-shrink: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--accent-green-glow);
+            border: 2px solid var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+
+        .step h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .step p {
+            color: var(--text-muted);
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="#" class="logo"><span class="cy">cy</span><span class="ders">ders</span></a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#performance">Performance</a></li>
+                <li><a href="#install">Install</a></li>
+                <li><a href="#docs">Docs</a></li>
+            </ul>
+            <a href="https://github.com/levkropp/cyders" class="github-btn">GitHub</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="badge">ESP32 Emulator</div>
+        <h1>Cyders</h1>
+        <p class="subtitle">Fast, modern ESP32 emulator for testing CYD (Cheap Yellow Display) firmware on your desktop</p>
+        <div class="cta-buttons">
+            <a href="#install" class="btn btn-primary">Get Started</a>
+            <a href="https://github.com/levkropp/cyders" class="btn btn-secondary">View on GitHub</a>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <div class="section-label">Capabilities</div>
+        <h2>Everything you need to test ESP32 firmware</h2>
+
+        <div class="cards">
+            <div class="card">
+                <h3>⚡ Real-time Performance</h3>
+                <p>40+ MIPS execution speed with dual-core ESP32 emulation for accurate firmware testing</p>
+            </div>
+            <div class="card">
+                <h3>🎨 Full LVGL Support</h3>
+                <p>Hardware-accelerated 60 FPS rendering with complete touch input simulation</p>
+            </div>
+            <div class="card">
+                <h3>🔧 Zero Setup</h3>
+                <p>Auto-builds Python environment locally with UV package manager. No system Python required</p>
+            </div>
+            <div class="card">
+                <h3>🔍 Debug UI</h3>
+                <p>Real-time register view, stack inspection, touch logging, and UART output monitoring</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="performance">
+        <div class="section-label">Benchmarks</div>
+        <h2>Built for Speed</h2>
+
+        <table class="perf-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Execution Speed</td>
+                    <td>40+ MIPS</td>
+                    <td>Real-time Xtensa CPU emulation</td>
+                </tr>
+                <tr>
+                    <td>Display Refresh</td>
+                    <td>60 FPS</td>
+                    <td>Hardware-accelerated GPU rendering</td>
+                </tr>
+                <tr>
+                    <td>Touch Latency</td>
+                    <td>&lt;1ms</td>
+                    <td>Mouse to XPT2046 driver mapping</td>
+                </tr>
+                <tr>
+                    <td>Startup Time</td>
+                    <td>&lt;1s</td>
+                    <td>Instant launch after first build</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="section">
+        <div class="section-label">Supported Boards</div>
+        <h2>CYD Hardware Compatibility</h2>
+
+        <div class="cards">
+            <div class="card">
+                <h3>2432S028R</h3>
+                <p>ESP32 • 2.8" 320×240 • XPT2046 touch • Micro-USB</p>
+            </div>
+            <div class="card">
+                <h3>2432S024C</h3>
+                <p>ESP32 • 2.4" 320×240 • XPT2046 touch • USB-C</p>
+            </div>
+            <div class="card">
+                <h3>3248S035C</h3>
+                <p>ESP32 • 3.5" 480×320 • GT911 capacitive • USB-C</p>
+            </div>
+            <div class="card">
+                <h3>4827S043C</h3>
+                <p>ESP32-S3 • 4.3" 800×480 • GT911 capacitive • USB-C</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="install">
+        <div class="section-label">Quick Start</div>
+        <h2>Get Running in 60 Seconds</h2>
+
+        <div class="steps">
+            <div class="step">
+                <div>
+                    <h3>Clone the repository</h3>
+                    <div class="code-block">
+                        <div class="code-header">bash</div>
+                        <code><span class="keyword">git</span> clone https://github.com/levkropp/cyders.git
+<span class="keyword">cd</span> cyders</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div>
+                    <h3>Run the launcher</h3>
+                    <div class="code-block">
+                        <div class="code-header">cmd</div>
+                        <code>run-cyders.bat</code>
+                    </div>
+                    <p>The launcher auto-builds demo firmware on first run (~5 minutes). Subsequent runs are instant.</p>
+                </div>
+            </div>
+
+            <div class="step">
+                <div>
+                    <h3>Test the interface</h3>
+                    <p>Click anywhere on the display to simulate touch. Check the Touch Log panel for coordinates. Try the interactive LVGL demo with buttons, sliders, and animations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="docs">
+        <div class="section-label">Architecture</div>
+        <h2>How It Works</h2>
+
+        <div class="code-block">
+            <div class="code-header">Component Stack</div>
+            <code><span class="comment">// Display Pipeline</span>
+pixels      <span class="comment">→ Hardware-accelerated pixel buffer</span>
+winit       <span class="comment">→ Cross-platform windowing</span>
+wgpu        <span class="comment">→ GPU rendering (60 FPS)</span>
+
+<span class="comment">// Emulator Core</span>
+flexe       <span class="comment">→ Xtensa CPU emulator (FFI)</span>
+dual-core   <span class="comment">→ Full ESP32 simulation</span>
+peripherals <span class="comment">→ UART, SD card, NVS, touch</span>
+
+<span class="comment">// User Interface</span>
+egui        <span class="comment">→ Immediate-mode GUI</span>
+panels      <span class="comment">→ Registers, stack, UART output</span>
+monitoring  <span class="comment">→ Real-time performance metrics</span></code>
+        </div>
+
+        <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Touch Input Flow</h3>
+        <div class="code-block">
+            <code><span class="comment">// Event propagation chain</span>
+Mouse Click <span class="comment">→</span> <span class="keyword">TouchState</span> (Rust)
+    <span class="comment">↓</span>
+C Callback (FFI)
+    <span class="comment">↓</span>
+XPT2046 Driver (Firmware)
+    <span class="comment">↓</span>
+LVGL Event Handler</code>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-label">Controls</div>
+        <h2>Keyboard Shortcuts</h2>
+
+        <table class="perf-table">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Mouse Click</td>
+                    <td>Simulate touch input at cursor position</td>
+                </tr>
+                <tr>
+                    <td>ESC</td>
+                    <td>Quit emulator</td>
+                </tr>
+                <tr>
+                    <td>P</td>
+                    <td>Pause/Resume execution</td>
+                </tr>
+                <tr>
+                    <td>F10</td>
+                    <td>Toggle info panel visibility</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>Built with Rust • Licensed under MIT or Apache-2.0 • <a href="https://github.com/levkropp/cyders" style="color: var(--accent-green);">View Source</a></p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,54 @@
+[package]
+name = "cyders"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["CYD Emulator Contributors"]
+description = "Modern Rust-based emulator for CYD ESP32 development boards"
+repository = "https://github.com/yourusername/cyders"
+
+[dependencies]
+# Display & windowing
+pixels = "0.13"
+winit = "0.28"
+wgpu = "0.16"
+
+# UI framework (egui) - version 0.22 uses wgpu 0.16 (should match pixels 0.13)
+egui = "0.22"
+egui-wgpu = "0.22"
+egui-winit = "0.22"
+
+# FFI
+libc = "0.2"
+parking_lot = "0.12"
+
+# Async & threading
+tokio = { version = "1", features = ["rt-multi-thread", "sync"] }
+crossbeam = "0.8"
+
+# File I/O
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+memmap2 = "0.9"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# Utilities
+anyhow = "1.0"
+thiserror = "1.0"
+
+[build-dependencies]
+cc = "1.0"  # Compile C stubs
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.dev]
+opt-level = 1

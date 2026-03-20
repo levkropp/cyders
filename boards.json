@@ -1,0 +1,46 @@
+[
+  {
+    "model": "2432S028R",
+    "chip": "ESP32",
+    "cores": 2,
+    "display_width": 320,
+    "display_height": 240,
+    "display_size": "2.8\"",
+    "touch_type": "XPT2046 (resistive)",
+    "sd_slots": 1,
+    "usb_type": "Micro-USB (UART)"
+  },
+  {
+    "model": "2432S024C",
+    "chip": "ESP32",
+    "cores": 2,
+    "display_width": 320,
+    "display_height": 240,
+    "display_size": "2.4\"",
+    "touch_type": "XPT2046 (resistive)",
+    "sd_slots": 1,
+    "usb_type": "USB-C (UART)"
+  },
+  {
+    "model": "3248S035C",
+    "chip": "ESP32",
+    "cores": 2,
+    "display_width": 480,
+    "display_height": 320,
+    "display_size": "3.5\"",
+    "touch_type": "GT911 (capacitive)",
+    "sd_slots": 1,
+    "usb_type": "USB-C (UART)"
+  },
+  {
+    "model": "4827S043C",
+    "chip": "ESP32-S3",
+    "cores": 2,
+    "display_width": 800,
+    "display_height": 480,
+    "display_size": "4.3\"",
+    "touch_type": "GT911 (capacitive)",
+    "sd_slots": 1,
+    "usb_type": "USB-C (native USB)"
+  }
+]
